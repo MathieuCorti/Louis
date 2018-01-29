@@ -1,0 +1,23 @@
+{
+  "name": "louis",
+  "version": "1.0.0",
+  "description": "Your average Discord Cleverbot.io",
+  "main": "louis.js",
+  "scripts": {
+    "run": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "discord",
+    "cleverbot",
+    "louis"
+  ],
+  "author": "Mathieu Corti",
+  "license": "MIT",
+  "dependencies": {
+    "cleverbot.io": "^1.0.4",
+    "discord.js": "^11.3.0"
+  },
+  "engines": {
+    "node": "9.3.0"
+  }
+}
