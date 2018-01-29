@@ -12,13 +12,13 @@ client.on('ready', () => {
 bot.create(function (err, session) {
   console.log("Cleverbot logged !");
   client.on('message', msg => {
-    if(msg.author.id != bot.user.id && msg.isMentioned(client.user)) {
+    if(msg.author.id !== bot.user.id && msg.isMentioned(client.user)) {
      const cleanMessage = msg.content.replace(/(<.*?>|@.*?)(?: |\s)/g, "");
       bot.ask(cleanMessage, function (err, response) {
-        msg.channel.send(response);
+        msg.channel.send(err ? "An error has occurred :(" : response);
       });
-  }
-});
+    }
+  });
 });
 
 client.login('NDA3NDQ3ODE0MjIyNzc0Mjcy.DVBpKA.6zup2uPxyiigiHsZYfTnztVf1N4');
