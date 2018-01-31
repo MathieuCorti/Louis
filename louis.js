@@ -35,12 +35,21 @@ function answer(msg) {
   }
   // Send a gif if the message contains only one word
   if (!/\s/g.test(msg)) {
-    Giphy.random(msg, function (err, res) {
-      if (err == null) {
-        msg.channel.send(res.data.url);
+    let gifLimit = 50;
+    Giphy.search({ q: msg, limit: gifLimit }, function (err, res) {
+      if (err == null && res.data.length > 0) {
+        let gifUrl = res.data[randomIntFromInterval(0, res.data.length)].url;
+        if (gifUrl.length > 0) {
+          msg.channel.send(gifUrl);
+        }
       }
     });
   }
+
+}
+
+function randomIntFromInterval(min,max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 client.login('NDA3NDQ3ODE0MjIyNzc0Mjcy.DVBpKA.6zup2uPxyiigiHsZYfTnztVf1N4').catch(function () {
