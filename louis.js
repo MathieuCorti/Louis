@@ -23,7 +23,7 @@ function answer(msg) {
   // If the bot is mentioned, respond with the cleverbot.io API
   if (msg.isMentioned(client.user)) {
     cleverbotAnswer(msg);
-  } else if (msg.channel.name == "talktolouis" || isSpeaking(10)) { // Is randomly speaking even if we don't mentioned him
+  } else if (msg.channel.name == "talktolouis" || isSpeaking(10)) { // Is randomly speaking even if we don't mentioned him, or always speaking when 'talktolouis'
     cleverbotAnswer(msg);
   }
   // React with 🐔 if the message contains "chicken"
@@ -41,15 +41,19 @@ function answer(msg) {
 }
 
 function cleverbotAnswer(msg) {
+  msg.channel.startTyping();
   const cleanMessage = msg.content.replace(/(<.*?>|@.*?)(?: |\s)/g, "");
   bot.ask(cleanMessage, function (err, response) {
+    msg.channel.stopTyping(true);
     msg.channel.send(err ? "An error has occurred :(" : response);
   });
 }
 
 function gifAnswer(msg) {
+  msg.channel.startTyping();
   let gifLimit = 50;
   Giphy.search({ q: msg, limit: gifLimit }, function (err, res) {
+    msg.channel.stopTyping(true);
     if (err == null && res.data.length > 0) {
       let gifUrl = res.data[randomIntFromInterval(0, res.data.length, 3)].url;
       if (gifUrl.length > 0) {
