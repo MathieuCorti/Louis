@@ -38,7 +38,7 @@ function answer(msg) {
     let gifLimit = 50;
     Giphy.search({ q: msg, limit: gifLimit }, function (err, res) {
       if (err == null && res.data.length > 0) {
-        let gifUrl = res.data[randomIntFromInterval(0, res.data.length)].url;
+        let gifUrl = res.data[randomIntFromInterval(0, res.data.length, 3)].url;
         if (gifUrl.length > 0) {
           msg.channel.send(gifUrl);
         }
@@ -48,8 +48,13 @@ function answer(msg) {
 
 }
 
-function randomIntFromInterval(min,max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
+// Higher degree lower result, set to 1 to get normal behavior
+function randomIntFromInterval(min, max, degree) {
+  return Math.floor(randomBalanced(degree) * (max - min + 1) + min);
+}
+
+function randomBalanced(degree) {
+  return Math.pow(Math.random(), degree);
 }
 
 client.login('NDA3NDQ3ODE0MjIyNzc0Mjcy.DVBpKA.6zup2uPxyiigiHsZYfTnztVf1N4').catch(function () {
