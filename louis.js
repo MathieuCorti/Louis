@@ -23,7 +23,7 @@ function answer(msg) {
   // If the bot is mentioned, respond with the cleverbot.io API
   if (msg.isMentioned(client.user)) {
     cleverbotAnswer(msg);
-  } else if (isSpeaking(10)) { // Is randomly speaking even if we don't mentioned him
+  } else if (msg.channel.name == "talktolouis" || isSpeaking(10)) { // Is randomly speaking even if we don't mentioned him
     cleverbotAnswer(msg);
   }
   // React with 🐔 if the message contains "chicken"
