@@ -22,10 +22,7 @@ bot.create(function (err, session) {
 function answer(msg) {
   // If the bot is mentioned, respond with the cleverbot.io API
   if (msg.isMentioned(client.user)) {
-    const cleanMessage = msg.content.replace(/(<.*?>|@.*?)(?: |\s)/g, "");
-    bot.ask(cleanMessage, function (err, response) {
-      msg.channel.send(err ? "An error has occurred :(" : response);
-    });
+    cleverbotAnswer(msg);
   }
   // React with 🐔 if the message contains "chicken"
   if (msg.cleanContent.toLocaleLowerCase().indexOf("chicken") > -1) {
@@ -33,19 +30,41 @@ function answer(msg) {
       console.log("Failed to react to [" + msg.cleanContent + "].");
     });
   }
-  // Send a gif if the message contains only one word
-  if (!/\s/g.test(msg)) {
-    let gifLimit = 50;
-    Giphy.search({ q: msg, limit: gifLimit }, function (err, res) {
-      if (err == null && res.data.length > 0) {
-        let gifUrl = res.data[randomIntFromInterval(0, res.data.length, 3)].url;
-        if (gifUrl.length > 0) {
-          msg.channel.send(gifUrl);
-        }
-      }
-    });
+
+  // Is randomly speaking even if we don't mentioned him
+  if (isSpeaking(10)) {
+    cleverbotAnswer(msg);
   }
 
+  // Randomly throwing gif sometimes if the message contains only one word
+  if (!/\s/g.test(msg) && isSpeaking(5)) {
+    gifAnswer(msg);
+  }
+
+}
+
+function cleverbotAnswer(msg) {
+  const cleanMessage = msg.content.replace(/(<.*?>|@.*?)(?: |\s)/g, "");
+  bot.ask(cleanMessage, function (err, response) {
+    msg.channel.send(err ? "An error has occurred :(" : response);
+  });
+}
+
+function gifAnswer(msg) {
+  let gifLimit = 50;
+  Giphy.search({ q: msg, limit: gifLimit }, function (err, res) {
+    if (err == null && res.data.length > 0) {
+      let gifUrl = res.data[randomIntFromInterval(0, res.data.length, 3)].url;
+      if (gifUrl.length > 0) {
+        msg.channel.send(gifUrl);
+      }
+    }
+  });
+}
+
+// higher degree is less interventions
+function isSpeaking(degree) {
+  return (randomIntFromInterval(0, degree, 1) == 0);
 }
 
 // Higher degree lower result, set to 1 to get normal behavior
