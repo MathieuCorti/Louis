@@ -23,17 +23,14 @@ function answer(msg) {
   // If the bot is mentioned, respond with the cleverbot.io API
   if (msg.isMentioned(client.user)) {
     cleverbotAnswer(msg);
+  } else if (isSpeaking(10)) { // Is randomly speaking even if we don't mentioned him
+    cleverbotAnswer(msg);
   }
   // React with 🐔 if the message contains "chicken"
   if (msg.cleanContent.toLocaleLowerCase().indexOf("chicken") > -1) {
     msg.react("🐔").catch(function () {
       console.log("Failed to react to [" + msg.cleanContent + "].");
     });
-  }
-
-  // Is randomly speaking even if we don't mentioned him
-  if (isSpeaking(10)) {
-    cleverbotAnswer(msg);
   }
 
   // Randomly throwing gif sometimes if the message contains only one word
