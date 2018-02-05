@@ -23,7 +23,7 @@ function answer(msg) {
   // If the bot is mentioned, respond with the cleverbot.io API
   if (msg.isMentioned(client.user)) {
     cleverbotAnswer(msg);
-  } else if (msg.channel.name == "talktolouis" || isSpeaking(10)) { // Is randomly speaking even if we don't mentioned him, or always speaking when 'talktolouis'
+  } else if (msg.channel.name === "talktolouis" || isSpeaking(10)) { // Is randomly speaking even if we don't mentioned him, or always speaking when 'talktolouis'
     cleverbotAnswer(msg);
   }
   // React with 🐔 if the message contains "chicken"
@@ -65,7 +65,7 @@ function gifAnswer(msg) {
 
 // higher degree is less interventions
 function isSpeaking(degree) {
-  return (randomIntFromInterval(0, degree, 1) == 0);
+  return (randomIntFromInterval(0, degree, 1) === 0);
 }
 
 // Higher degree lower result, set to 1 to get normal behavior
