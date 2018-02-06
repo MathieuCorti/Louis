@@ -10,7 +10,7 @@ const config = low(adapter);
 
 const client  = new Discord.Client();
 const bot     = new Cleverbot(config.get('cleverbot.apiUser').value(), config.get('cleverbot.apiKey').value());
-bot.setNick(config.get('cleverbot.bot.name').value());
+bot.setNick(config.get('bot.name').value());
 
 client.on('ready', () => {
   console.log("Logged in as " + client.user.tag + "!");
@@ -29,7 +29,9 @@ function answer(msg) {
   // If the bot is mentioned, respond with the cleverbot.io API
   if (msg.isMentioned(client.user)) {
     cleverbotAnswer(msg);
-  } else if (msg.channel.name === "talktolouis" || isSpeaking(10)) { // Is randomly speaking even if we don't mentioned him, or always speaking when 'talktolouis'
+  }
+  // Is randomly speaking even if we don't mentioned him, or always speaking when 'talktolouis'
+  else if (msg.channel.name === "talktolouis" || isSpeaking(config.get('bot.speakRate').value())) {
     cleverbotAnswer(msg);
   }
   // React with 🐔 if the message contains "chicken"
@@ -38,9 +40,8 @@ function answer(msg) {
       console.log("Failed to react to [" + msg.cleanContent + "].");
     });
   }
-
   // Randomly throwing gif sometimes if the message contains only one word
-  if (!/\s/g.test(msg) && isSpeaking(5)) {
+  if (!/\s/g.test(msg) && isSpeaking(config.get('bot.gifRate').value())) {
     gifAnswer(msg);
   }
 
@@ -57,8 +58,7 @@ function cleverbotAnswer(msg) {
 
 function gifAnswer(msg) {
   msg.channel.startTyping();
-  let gifLimit = 50;
-  Giphy.search({ q: msg, limit: gifLimit }, function (err, res) {
+  Giphy.search({ q: msg, limit: config.get('giphy.searchLimit').value() }, function (err, res) {
     msg.channel.stopTyping(true);
     if (err == null && res.data.length > 0) {
       let gifUrl = res.data[randomIntFromInterval(0, res.data.length, 3)].url;
