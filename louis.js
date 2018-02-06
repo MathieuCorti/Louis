@@ -1,10 +1,16 @@
+// Requires
 const Discord   = require("discord.js");
 const Cleverbot = require("cleverbot.io");
-const Giphy = require('giphy-api')();
+const Giphy     = require('giphy-api')();
+const low       = require('lowdb');
+const FileSync  = require('lowdb/adapters/FileSync');
+
+const adapter = new FileSync('config.json');
+const config = low(adapter);
 
 const client  = new Discord.Client();
-const bot     = new Cleverbot("Bfa7D3rlzjl3imaH", "KFWAdnsfyoDIRqyxMfZu3mWgwwkr5fus");
-bot.setNick("Louis");
+const bot     = new Cleverbot(config.get('cleverbot.apiUser').value(), config.get('cleverbot.apiKey').value());
+bot.setNick(config.get('cleverbot.bot.name').value());
 
 client.on('ready', () => {
   console.log("Logged in as " + client.user.tag + "!");
@@ -77,6 +83,6 @@ function randomBalanced(degree) {
   return Math.pow(Math.random(), degree);
 }
 
-client.login('NDA3NDQ3ODE0MjIyNzc0Mjcy.DVBpKA.6zup2uPxyiigiHsZYfTnztVf1N4').catch(function () {
+client.login(config.get('discord.token').value()).catch(function () {
   console.log("Failed to log to Discord.");
 });
