@@ -1,0 +1,22 @@
+{
+  "isEditable": true,
+  "bot": {
+    "name": "Louis",
+    "speakRate": 10,
+    "gifRate": 5
+  },
+  "giphy": {
+    "searchLimit": 50
+  },
+  "channels": {
+    "alwaysSpeak": [
+      "talktolouis"
+    ],
+    "neverSpeak": [
+    ]
+  },
+  "messages": [
+    { "content": "chicken", "answer": "I love chicken !", "reaction": "🐔" },
+    { "content": "poop", "reaction": "💩" }
+  ]
+}

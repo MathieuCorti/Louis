@@ -5,12 +5,15 @@ const Giphy     = require('giphy-api')();
 const low       = require('lowdb');
 const FileSync  = require('lowdb/adapters/FileSync');
 
-const adapter = new FileSync('config.json');
-const config = low(adapter);
+const configAdapter = new FileSync('config.json');
+const config = low(configAdapter);
+
+const rulesAdapter = new FileSync('rules.json');
+const rules = low(rulesAdapter);
 
 const client  = new Discord.Client();
 const bot     = new Cleverbot(config.get('cleverbot.apiUser').value(), config.get('cleverbot.apiKey').value());
-bot.setNick(config.get('bot.name').value());
+bot.setNick(rules.get('bot.name').value());
 
 client.on('ready', () => {
   console.log("Logged in as " + client.user.tag + "!");
@@ -19,29 +22,35 @@ client.on('ready', () => {
 bot.create(function (err, session) {
   console.log("Cleverbot logged !");
   client.on('message', msg => {
-    if(!msg.author.bot) {
+    if(!msg.author.bot && !rules.get('channels.neverSpeak').value().includes(msg.channel.name)) {
       answer(msg);
     }
   });
 });
 
 function answer(msg) {
+  const messageRules = rules.get('messages').find({ content: msg.cleanContent.toLocaleLowerCase() }).value();
+  if (messageRules != null) {
+    if (messageRules.answer != null) {
+      msg.channel.send(messageRules.answer);
+    }
+    if (messageRules.reaction != null) {
+      msg.react(messageRules.reaction).catch(function () {
+        console.log("Failed to react to [" + msg.cleanContent + "].");
+      });
+    }
+  }
   // If the bot is mentioned, respond with the cleverbot.io API
-  if (msg.isMentioned(client.user)) {
+  else if (msg.isMentioned(client.user)) {
     cleverbotAnswer(msg);
   }
   // Is randomly speaking even if we don't mentioned him, or always speaking when 'talktolouis'
-  else if (msg.channel.name === "talktolouis" || isSpeaking(config.get('bot.speakRate').value())) {
+  else if (rules.get('channels.alwaysSpeak').value().includes(msg.channel.name)
+    || isSpeaking(rules.get('bot.speakRate').value())) {
     cleverbotAnswer(msg);
   }
-  // React with 🐔 if the message contains "chicken"
-  if (msg.cleanContent.toLocaleLowerCase().indexOf("chicken") > -1) {
-    msg.react("🐔").catch(function () {
-      console.log("Failed to react to [" + msg.cleanContent + "].");
-    });
-  }
   // Randomly throwing gif sometimes if the message contains only one word
-  if (!/\s/g.test(msg) && isSpeaking(config.get('bot.gifRate').value())) {
+  if (!/\s/g.test(msg) && isSpeaking(rules.get('bot.gifRate').value())) {
     gifAnswer(msg);
   }
 
@@ -58,7 +67,7 @@ function cleverbotAnswer(msg) {
 
 function gifAnswer(msg) {
   msg.channel.startTyping();
-  Giphy.search({ q: msg, limit: config.get('giphy.searchLimit').value() }, function (err, res) {
+  Giphy.search({ q: msg, limit: rules.get('giphy.searchLimit').value() }, function (err, res) {
     msg.channel.stopTyping(true);
     if (err == null && res.data.length > 0) {
       let gifUrl = res.data[randomIntFromInterval(0, res.data.length, 3)].url;
@@ -84,5 +93,5 @@ function randomBalanced(degree) {
 }
 
 client.login(config.get('discord.token').value()).catch(function () {
-  console.log("Failed to log to Discord.");
+  console.log("Failed to login to Discord.");
 });
