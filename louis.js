@@ -57,7 +57,7 @@ function answer(msg) {
 }
 
 function cleverbotAnswer(msg) {
-  msg.channel.startTyping();
+  msg.channel.startTyping(2);
   const cleanMessage = msg.content.replace(/(<.*?>|@.*?)(?: |\s)/g, "");
   bot.ask(cleanMessage, function (err, response) {
     msg.channel.stopTyping(true);
@@ -66,7 +66,7 @@ function cleverbotAnswer(msg) {
 }
 
 function gifAnswer(msg) {
-  msg.channel.startTyping();
+  msg.channel.startTyping(2);
   Giphy.search({ q: msg, limit: rules.get('giphy.searchLimit').value() }, function (err, res) {
     msg.channel.stopTyping(true);
     if (err == null && res.data.length > 0) {
