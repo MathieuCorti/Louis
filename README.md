@@ -1,7 +1,8 @@
 # Louis
 Your average Discord Cleverbot.
 
-Louis can talk to you in multiples languages, respond with gifs, add reactions to your messages ... More alive than the real one !
+Louis can talk to you in multiples languages, respond with gifs, add reactions to your messages ... 
+More alive than the real one !
 
 ## demo
 
